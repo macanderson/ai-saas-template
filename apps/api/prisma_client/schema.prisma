@@ -1,0 +1,262 @@
+generator client {
+  provider = "prisma-client-py"
+  output   = "../../apps/api/prisma_client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CandidateStatus {
+  ACTIVE
+  INACTIVE
+  INTERVIEWING
+  OFFERED
+  HIRED
+  REJECTED
+}
+
+enum CandidateCareerLevel {
+  ENTRY_LEVEL
+  MID_LEVEL
+  SENIOR_LEVEL
+  DIRECTOR_LEVEL
+  C_LEVEL
+}
+
+enum CandidateInterest {
+  UNKNOWN
+  NOT_INTERESTED
+  OPEN_TO_WORK
+}
+
+enum CompanyStage {
+  PRE_SEED
+  SEED
+  SERIES_A
+  SERIES_B
+  SERIES_C
+  SERIES_D
+  PUBLIC
+  PRIVATE
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+  ON_HOLD
+  FILLED
+}
+
+enum CompanySize {
+  SIZE_1_10
+  SIZE_10_50
+  SIZE_50_100
+  SIZE_100_250
+  SIZE_250_500
+  SIZE_500_1000
+  SIZE_1000_5000
+  SIZE_5000_PLUS
+}
+
+enum Industry {
+  TECHNOLOGY
+  FINANCE
+  HEALTHCARE
+  EDUCATION
+  MANUFACTURING
+  RETAIL
+  ENERGY
+  TRANSPORTATION
+  ENTERTAINMENT
+  HOSPITALITY
+  GOVERNMENT
+  NON_PROFIT
+  REAL_ESTATE
+  CONSULTING
+  TELECOMMUNICATIONS
+  AGRICULTURE
+  OTHER
+}
+
+model Tenant {
+  id         String      @id @default(uuid())
+  name       String
+  users      User[]      @relation("TenantUsers")
+  candidates Candidate[]
+  companies  Company[]
+  searches   Search[]
+  jobs       Job[]       @relation("TenantJobs")
+
+  createdById String?
+  updatedById String?
+  createdBy   User?     @relation("TenantCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?     @relation("TenantUpdatedBy", fields: [updatedById], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  deleted     Boolean   @default(false)
+
+  @@unique([name, deletedAt], name: "unique_tenant_name")
+  @@map("tenants")
+}
+
+model User {
+  id         String      @id @default(uuid())
+  email      String      @unique
+  name       String?
+  tenantId   String
+  tenant     Tenant      @relation("TenantUsers", fields: [tenantId], references: [id])
+  searches   Search[]
+  candidates Candidate[]
+  jobs       Job[]       @relation("UserJobs")
+
+  createdById String?
+  updatedById String?
+  createdBy   User?   @relation("UserCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?   @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+
+  createdTenants    Tenant[]    @relation("TenantCreatedBy")
+  updatedTenants    Tenant[]    @relation("TenantUpdatedBy")
+  createdUsers      User[]      @relation("UserCreatedBy")
+  updatedUsers      User[]      @relation("UserUpdatedBy")
+  createdCandidates Candidate[] @relation("CandidateCreatedBy")
+  updatedCandidates Candidate[] @relation("CandidateUpdatedBy")
+  createdSearches   Search[]    @relation("SearchCreatedBy")
+  updatedSearches   Search[]    @relation("SearchUpdatedBy")
+  touchedCandidates Candidate[] @relation("CandidateTouchedBy")
+  createdJobs       Job[]       @relation("JobCreatedBy")
+  updatedJobs       Job[]       @relation("JobUpdatedBy")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  @@unique([tenantId, email, deletedAt], name: "unique_user_email_tenant")
+  @@map("users")
+}
+
+model Candidate {
+  id          String                @id @default(uuid())
+  name        String?
+  email       String?               @unique
+  linkedin    String?
+  github      String?
+  website     String?
+  phone       String?
+  location    String?
+  status      CandidateStatus?
+  interest    CandidateInterest?
+  careerLevel CandidateCareerLevel?
+  resume      String?
+  source      String?
+  profile     Json?
+  notes       String?
+  lastTouched DateTime?
+
+  tenantId        String
+  userId          String
+  lastTouchedById String?
+  tenant          Tenant    @relation(fields: [tenantId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
+  lastTouchedBy   User?     @relation("CandidateTouchedBy", fields: [lastTouchedById], references: [id])
+  searches        Search[]  @relation("CandidateSearches")
+  companies       Company[] @relation("CompanyCandidates")
+  jobs            Job[]     @relation("JobCandidates")
+
+  createdById String?
+  updatedById String?
+  createdBy   User?   @relation("CandidateCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?   @relation("CandidateUpdatedBy", fields: [updatedById], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  @@unique([tenantId, email, deletedAt], name: "unique_candidate_email")
+  @@map("candidates")
+}
+
+model Search {
+  id      String @id @default(uuid())
+  title   String
+  filters Json
+
+  userId     String
+  tenantId   String
+  user       User        @relation(fields: [userId], references: [id])
+  tenant     Tenant      @relation(fields: [tenantId], references: [id])
+  candidates Candidate[] @relation("CandidateSearches")
+
+  createdById String?
+  updatedById String?
+  createdBy   User?   @relation("SearchCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?   @relation("SearchUpdatedBy", fields: [updatedById], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  @@map("searches")
+}
+
+model Job {
+  id               String    @id @default(uuid())
+  title            String
+  description      String?
+  location         String?
+  salaryMin        Int?
+  salaryMax        Int?
+  employmentType   String?
+  status           JobStatus @default(OPEN)
+  requirements     String?
+  responsibilities String?
+  benefits         String?
+  industry         Industry?
+
+  tenantId   String
+  tenant     Tenant      @relation("TenantJobs", fields: [tenantId], references: [id])
+  userId     String
+  user       User        @relation("UserJobs", fields: [userId], references: [id])
+  companyId  String
+  company    Company     @relation(fields: [companyId], references: [id])
+  candidates Candidate[] @relation("JobCandidates")
+
+  createdById String?
+  updatedById String?
+  createdBy   User?   @relation("JobCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?   @relation("JobUpdatedBy", fields: [updatedById], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  @@unique([tenantId, title, deletedAt], name: "unique_job_title_tenant")
+  @@map("jobs")
+}
+
+model Company {
+  id         String        @id @default(uuid())
+  name       String
+  logo       String?
+  url        String?
+  stage      CompanyStage?
+  size       CompanySize?
+  industry   Industry?
+  tenantId   String
+  tenant     Tenant        @relation(fields: [tenantId], references: [id])
+  jobs       Job[]
+  candidates Candidate[]   @relation("CompanyCandidates")
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  deletedAt  DateTime?
+  deleted    Boolean       @default(false)
+
+  @@unique([tenantId, name, deletedAt], name: "unique_company_name_tenant")
+  @@map("companies")
+}

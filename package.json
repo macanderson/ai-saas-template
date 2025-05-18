@@ -1,6 +1,10 @@
 {
   "name": "ai-app-template",
   "private": true,
+  "prisma.schema": "./packages/prisma/schema.prisma",
+  "version": "0.0.1",
+  "description": "A template for building AI applications with a monorepo structure using pnpm.",
+  "license": "MIT",
   "workspaces": [
     "apps/*",
     "packages/*"
