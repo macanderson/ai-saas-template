@@ -5,4 +5,10 @@ This template is designed for creating full stack monorepos that support the dev
 The project uses **turborepo** with `pnpm` workspaces.  The backend lives in
 `apps/api` while a Next.js frontend is scaffolded in `apps/web`.
 
-A complete README is coming soon with installation & usage instructions.
+The scaffold now includes authentication with **Clerk** and a PostgreSQL
+database hosted on **Supabase**. Basic pages for user registration, login,
+logout and profile management are implemented in the Next.js app. A simple API
+route demonstrates how to enforce tenant-based data access using Clerk
+authentication together with Supabase row level security policies.
+
+Environment variables can be configured using the provided `.env.example` file.
