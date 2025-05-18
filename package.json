@@ -1,0 +1,21 @@
+{
+  "name": "ai-app-template",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "uvicorn api.main:app --reload --host 0.0.0.0 --port 8000",
+    "dev": "concurrently \"pnpm dev:web\" \"pnpm dev:api\"",
+    "generate": "prisma generate --schema=packages/prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "prisma": "^5.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.0.0"
+  }
+}

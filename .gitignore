@@ -1,0 +1,12 @@
+node_modules
+.env
+__pycache__/
+*.pyc
+apps/api/.venv
+prisma/migrations/
+supabase/.temp/
+.DS_Store
+.vscode/
+.cursor/
+*.log
+
