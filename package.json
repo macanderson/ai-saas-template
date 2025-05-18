@@ -13,11 +13,13 @@
     "dev:web": "pnpm --filter web dev",
     "dev:api": "uvicorn api.main:app --reload --host 0.0.0.0 --port 8000",
     "dev": "concurrently \"pnpm dev:web\" \"pnpm dev:api\"",
-    "generate": "prisma generate --schema=packages/prisma/schema.prisma"
+    "generate": "prisma generate --schema=packages/prisma/schema.prisma",
+    "build": "turbo run build"
   },
   "devDependencies": {
     "concurrently": "^8.2.0",
-    "prisma": "^5.0.0"
+    "prisma": "^5.0.0",
+    "turbo": "^1.9.0"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0"
