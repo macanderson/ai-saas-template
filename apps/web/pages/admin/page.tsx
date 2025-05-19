@@ -5,13 +5,13 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { removeRole, setRole } from "./_actions";
 
 export default async function AdminDashboard(params: {
-  searchParams: Promise<{ search?: string }>;
+  searchParams: { search?: string };
 }) {
   if (!(await checkRole("business"))) {
     redirect("/");
   }
 
-  const query = (await params.searchParams).search;
+  const query = params.searchParams.search;
 
   const client = clerkClient;
 

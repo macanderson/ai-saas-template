@@ -18,3 +18,11 @@ page for managing tenants and users.
 
 Tailwind CSS v3 is configured in the `web` app for styling components, and the
 Tailwind and PostCSS configuration files are written in TypeScript.
+
+## Installation
+
+To install all Node and Python dependencies, run:
+
+```bash
+./scripts/install.sh
+```
