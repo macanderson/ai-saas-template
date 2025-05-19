@@ -9,5 +9,6 @@ supabase/.temp/
 .vscode/
 .cursor/
 *.log
-
+.turbo
+*.tgz
 .next
