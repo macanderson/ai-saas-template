@@ -146,8 +146,8 @@ model User {
   name              String?       @map("name")
   tenantId          String        @map("tenant_id")
   tenant            Tenant        @relation("TenantUsers", fields: [tenantId], references: [id])
-  searches          Search[]
-  candidates        Candidate[]
+  searches          Search[]      @relation("UserSearches")
+  candidates        Candidate[]   @relation("UserCandidates")
   jobs              Job[]         @relation("UserJobs")
   systemJobs        SystemJob[]   @relation("UserSystemJobs")
   systemAuditLogs   SystemAuditLog[] @relation("UserSystemAuditLogs")
@@ -170,7 +170,6 @@ model User {
   updatedJobs       Job[]         @relation("JobUpdatedBy")
   createdSystemJobs SystemJob[]   @relation("SystemJobCreatedBy")
   updatedSystemJobs SystemJob[]   @relation("SystemJobUpdatedBy")
-
 
   createdAt         DateTime      @default(now()) @map("created_at")
   updatedAt         DateTime      @updatedAt @map("updated_at")
@@ -204,7 +203,7 @@ model Candidate {
   userId          String                @map("user_id")
   lastTouchedById String?               @map("last_touched_by_id")
   tenant          Tenant                @relation(fields: [tenantId], references: [id])
-  user            User                  @relation(fields: [userId], references: [id])
+  user            User                  @relation("UserCandidates", fields: [userId], references: [id])
   lastTouchedBy   User?                 @relation("CandidateTouchedBy", fields: [lastTouchedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
   searches        Search[]              @relation("CandidateSearches")
   companies       Company[]             @relation("CompanyCandidates")
@@ -232,7 +231,7 @@ model Search {
 
   userId        String       @map("user_id")
   tenantId      String       @map("tenant_id")
-  user          User         @relation(fields: [userId], references: [id])
+  user          User         @relation("UserSearches", fields: [userId], references: [id])
   tenant        Tenant       @relation(fields: [tenantId], references: [id])
   candidates    Candidate[]  @relation("CandidateSearches")
 
