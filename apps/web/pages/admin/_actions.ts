@@ -1,13 +1,13 @@
 "use server";
 
-import { checkRole } from "@/../../lib/utils";
+import { checkRole } from "@/utils";
 import { clerkClient } from "@clerk/nextjs/server";
 
 export async function setRole(formData: FormData) {
   const client = clerkClient;
 
-  // Check that the user trying to set the role is an admin
-  if (!checkRole("admin")) {
+  // Check that the user trying to set the role is a business admin
+  if (!(await checkRole("business"))) {
     console.log("Not Authorized");
     // return { message: "Not Authorized" };
   }
@@ -29,6 +29,11 @@ export async function setRole(formData: FormData) {
 
 export async function removeRole(formData: FormData) {
   const client = clerkClient;
+
+  if (!(await checkRole("business"))) {
+    console.log("Not Authorized");
+    return;
+  }
 
   try {
     const res = await client.users.updateUserMetadata(
