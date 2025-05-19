@@ -2944,14 +2944,6 @@ _UserWhereUnique_id_Input = TypedDict(
     total=True
 )
 
-_UserWhereUnique_email_Input = TypedDict(
-    '_UserWhereUnique_email_Input',
-    {
-        'email': '_str',
-    },
-    total=True
-)
-
 _UserCompoundunique_user_email_tenantKeyInner = TypedDict(
     '_UserCompoundunique_user_email_tenantKeyInner',
     {
@@ -2972,7 +2964,6 @@ _UserCompoundunique_user_email_tenantKey = TypedDict(
 
 UserWhereUniqueInput = Union[
     '_UserWhereUnique_id_Input',
-    '_UserWhereUnique_email_Input',
     '_UserCompoundunique_user_email_tenantKey',
 ]
 
@@ -4558,14 +4549,6 @@ _CandidateWhereUnique_id_Input = TypedDict(
     total=True
 )
 
-_CandidateWhereUnique_email_Input = TypedDict(
-    '_CandidateWhereUnique_email_Input',
-    {
-        'email': '_str',
-    },
-    total=True
-)
-
 _CandidateCompoundunique_candidate_emailKeyInner = TypedDict(
     '_CandidateCompoundunique_candidate_emailKeyInner',
     {
@@ -4586,7 +4569,6 @@ _CandidateCompoundunique_candidate_emailKey = TypedDict(
 
 CandidateWhereUniqueInput = Union[
     '_CandidateWhereUnique_id_Input',
-    '_CandidateWhereUnique_email_Input',
     '_CandidateCompoundunique_candidate_emailKey',
 ]
 
