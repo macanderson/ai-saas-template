@@ -15,7 +15,7 @@ export default async function AdminDashboard(params: {
 
   const client = clerkClient;
 
-  const users = query ? (await client.users.getUserList({ query })).data : [];
+  const users: any = query ? await client.users.getUserList({ query }) : [];
 
   return (
     <>
@@ -26,7 +26,7 @@ export default async function AdminDashboard(params: {
 
       <SearchUsers />
 
-      {users.map((user) => {
+      {users.map((user: any) => {
         return (
           <div key={user.id}>
             <div>
@@ -36,7 +36,7 @@ export default async function AdminDashboard(params: {
             <div>
               {
                 user.emailAddresses.find(
-                  (email) => email.id === user.primaryEmailAddressId
+                  (email: any) => email.id === user.primaryEmailAddressId
                 )?.emailAddress
               }
             </div>
