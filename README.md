@@ -25,8 +25,15 @@ Tailwind and PostCSS configuration files are written in TypeScript.
 
 ## Installation
 
-To install all Node and Python dependencies, run:
+Run the install script to set up Node dependencies and create the Python
+virtual environment:
 
 ```bash
 ./scripts/install.sh
+```
+
+After installation, activate the environment when working on the API:
+
+```bash
+source scripts/activate_venv.sh
 ```
