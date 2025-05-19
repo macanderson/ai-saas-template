@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { SignedIn, SignedOut, SignInButton } from '@clerk/nextjs';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 export default function SuperPage() {
   const [tenantName, setTenantName] = useState('');
   const [userEmail, setUserEmail] = useState('');
@@ -8,7 +10,7 @@ export default function SuperPage() {
   const [userTenant, setUserTenant] = useState('');
 
   async function createTenant() {
-    await fetch('/api/super/createTenant', {
+    await fetch(`${API_URL}/tenants`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: tenantName }),
@@ -17,7 +19,7 @@ export default function SuperPage() {
   }
 
   async function createUser() {
-    await fetch('/api/super/createUser', {
+    await fetch(`${API_URL}/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: userEmail, name: userName, tenantId: userTenant }),

@@ -11,6 +11,14 @@ class TenantIn(BaseModel):
 class Tenant(TenantIn):
     id: str
 
+class UserIn(BaseModel):
+    email: str
+    name: str | None = None
+    tenantId: str
+
+class User(UserIn):
+    id: str
+
 @app.on_event("startup")
 async def startup():
     await prisma.connect()
@@ -26,6 +34,12 @@ async def list_tenants():
 @app.post("/tenants", response_model=Tenant)
 async def create_tenant(data: TenantIn):
     return await prisma.tenant.create({"data": {"name": data.name}})
+
+@app.post("/users", response_model=User)
+async def create_user(data: UserIn):
+    return await prisma.user.create(
+        {"data": {"email": data.email, "name": data.name, "tenantId": data.tenantId}}
+    )
 
 @app.delete("/tenants/{tenant_id}")
 async def delete_tenant(tenant_id: str):
