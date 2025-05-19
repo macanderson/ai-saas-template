@@ -1,4 +1,1 @@
-export interface ExampleType {
-  id: string;
-  name: string;
-}
+export type { Roles } from "./globals";
