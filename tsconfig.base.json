@@ -1,4 +1,5 @@
 {
+  "module": "nodenext",
   "compilerOptions": {
     "target": "esnext",
     "lib": ["dom", "esnext"],
