@@ -1,23 +1,22 @@
-import Link from "next/link";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { greet } from "@/utils";
+import { useUser, SignIn } from '@clerk/nextjs';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export default function Home() {
-  return (
-    <main>
-      <h1>ScoutAI</h1>
-      <SignedIn>
-        <UserButton />
-        <p>
-          <Link href="/profile">Edit Profile</Link>
-        </p>
-      </SignedIn>
-      <SignedOut>
-        <p>
-          <Link href="/sign-in">Sign In</Link> |{" "}
-          <Link href="/sign-up">Sign Up</Link>
-        </p>
-      </SignedOut>
-    </main>
-  );
+  const { user } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (user) {
+      const role = user.publicMetadata.role as string | undefined;
+      if (role) {
+        router.replace(`/${role}`);
+      }
+    }
+  }, [user, router]);
+
+  if (!user) {
+    return <SignIn path="/" routing="path" />;
+  }
+  return null;
 }

@@ -19,6 +19,7 @@ enum CandidateStatus {
   HIRED
   REJECTED
   @@schema("api")
+  @@map("candidate_status")
 }
 
 enum CandidateCareerLevel {
@@ -28,7 +29,7 @@ enum CandidateCareerLevel {
   DIRECTOR_LEVEL
   C_LEVEL
   @@schema("api")
-
+  @@map("candidate_career_level")
 }
 
 enum CandidateInterest {
@@ -36,6 +37,7 @@ enum CandidateInterest {
   NOT_INTERESTED
   OPEN_TO_WORK
   @@schema("api")
+  @@map("candidate_interest")
 }
 
 enum CompanyStage {
@@ -48,6 +50,7 @@ enum CompanyStage {
   PUBLIC
   PRIVATE
   @@schema("api")
+  @@map("company_stage")
 }
 
 enum JobStatus {
@@ -56,6 +59,7 @@ enum JobStatus {
   ON_HOLD
   FILLED
   @@schema("api")
+  @@map("job_status")
 }
 
 enum CompanySize {
@@ -68,6 +72,7 @@ enum CompanySize {
   SIZE_1000_5000
   SIZE_5000_PLUS
   @@schema("api")
+  @@map("company_size")
 }
 
 enum Industry {
@@ -89,6 +94,7 @@ enum Industry {
   AGRICULTURE
   OTHER
   @@schema("api")
+  @@map("industry")
 }
 
 model Tenant {
