@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["api"]
+  schemas  = ["api", "system"]
 }
 
 enum CandidateStatus {
@@ -97,23 +97,43 @@ enum Industry {
   @@map("industry")
 }
 
-model Tenant {
-  id        String   @id @default(uuid()) @map("id")
-  name      String   @map("name")
-  users     User[]   @relation("TenantUsers")
-  candidates Candidate[]
-  companies  Company[]
-  searches  Search[]
-  jobs      Job[]   @relation("TenantJobs")
+enum TaskStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+  @@schema("system")
+  @@map("task_status")
+}
 
-  createdById String? @map("created_by_id")
-  updatedById String? @map("updated_by_id")
-  createdBy   User?    @relation("TenantCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  updatedBy   User?    @relation("TenantUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-  deleted     Boolean  @default(false) @map("deleted")
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+  @@schema("system")
+  @@map("task_priority")
+}
+
+model Tenant {
+  id            String      @id @default(uuid()) @map("id")
+  name          String      @map("name")
+  users         User[]      @relation("TenantUsers")
+  candidates    Candidate[]
+  companies     Company[]
+  searches      Search[]
+  jobs          Job[]       @relation("TenantJobs")
+  systemJobs    SystemJob[] @relation("TenantSystemJobs")
+
+  createdById   String?     @map("created_by_id")
+  updatedById   String?     @map("updated_by_id")
+  createdBy     User?       @relation("TenantCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy     User?       @relation("TenantUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  deletedAt     DateTime?   @map("deleted_at")
+  deleted       Boolean     @default(false) @map("deleted")
 
   @@map("tenants")
   @@unique([name, deletedAt], name: "unique_tenant_name")
@@ -121,36 +141,41 @@ model Tenant {
 }
 
 model User {
-  id          String   @id @default(uuid()) @map("id")
-  email       String   @map("email")
-  name        String?  @map("name")
-  tenantId    String   @map("tenant_id")
-  tenant      Tenant   @relation("TenantUsers", fields: [tenantId], references: [id])
-  searches    Search[]
-  candidates  Candidate[]
-  jobs             Job[]   @relation("UserJobs")
+  id                String        @id @default(uuid()) @map("id")
+  email             String        @map("email")
+  name              String?       @map("name")
+  tenantId          String        @map("tenant_id")
+  tenant            Tenant        @relation("TenantUsers", fields: [tenantId], references: [id])
+  searches          Search[]
+  candidates        Candidate[]
+  jobs              Job[]         @relation("UserJobs")
+  systemJobs        SystemJob[]   @relation("UserSystemJobs")
+  systemAuditLogs   SystemAuditLog[] @relation("UserSystemAuditLogs")
 
-  createdById String? @map("created_by_id")
-  updatedById String? @map("updated_by_id")
-  createdBy   User?    @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  updatedBy   User?    @relation("UserUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdById       String?       @map("created_by_id")
+  updatedById       String?       @map("updated_by_id")
+  createdBy         User?         @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy         User?         @relation("UserUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
-  createdTenants    Tenant[] @relation("TenantCreatedBy")
-  updatedTenants    Tenant[] @relation("TenantUpdatedBy")
-  createdUsers      User[]   @relation("UserCreatedBy")
-  updatedUsers      User[]   @relation("UserUpdatedBy")
-  createdCandidates Candidate[] @relation("CandidateCreatedBy")
-  updatedCandidates Candidate[] @relation("CandidateUpdatedBy")
-  createdSearches   Search[]    @relation("SearchCreatedBy")
-  updatedSearches   Search[]    @relation("SearchUpdatedBy")
-  touchedCandidates Candidate[] @relation("CandidateTouchedBy")
-  createdJobs      Job[]   @relation("JobCreatedBy")
-  updatedJobs      Job[]   @relation("JobUpdatedBy")
+  createdTenants    Tenant[]      @relation("TenantCreatedBy")
+  updatedTenants    Tenant[]      @relation("TenantUpdatedBy")
+  createdUsers      User[]        @relation("UserCreatedBy")
+  updatedUsers      User[]        @relation("UserUpdatedBy")
+  createdCandidates Candidate[]   @relation("CandidateCreatedBy")
+  updatedCandidates Candidate[]   @relation("CandidateUpdatedBy")
+  createdSearches   Search[]      @relation("SearchCreatedBy")
+  updatedSearches   Search[]      @relation("SearchUpdatedBy")
+  touchedCandidates Candidate[]   @relation("CandidateTouchedBy")
+  createdJobs       Job[]         @relation("JobCreatedBy")
+  updatedJobs       Job[]         @relation("JobUpdatedBy")
+  createdSystemJobs SystemJob[]   @relation("SystemJobCreatedBy")
+  updatedSystemJobs SystemJob[]   @relation("SystemJobUpdatedBy")
 
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  deletedAt   DateTime? @map("deleted_at")
-  deleted     Boolean  @default(false) @map("deleted")
+
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  deletedAt         DateTime?     @map("deleted_at")
+  deleted           Boolean       @default(false) @map("deleted")
 
   @@map("users")
   @@unique([tenantId, email, deletedAt], name: "unique_user_email_tenant")
@@ -158,42 +183,42 @@ model User {
 }
 
 model Candidate {
-  id            String               @id @default(uuid()) @map("id")
-  name          String?              @map("name")
-  email         String?              @map("email")
-  linkedin      String?              @map("linkedin")
-  github        String?              @map("github")
-  website       String?              @map("website")
-  phone         String?              @map("phone")
-  location      String?              @map("location")
-  status        CandidateStatus?     @map("status")
-  interest      CandidateInterest?   @map("interest")
-  careerLevel   CandidateCareerLevel? @map("career_level")
-  resume        String?              @map("resume")
-  source        String?              @map("source")
-  profile       Json?                @map("profile")
-  notes         String?              @map("notes")
-  lastTouched   DateTime?            @map("last_touched")
+  id              String                @id @default(uuid()) @map("id")
+  name            String?               @map("name")
+  email           String?               @map("email")
+  linkedin        String?               @map("linkedin")
+  github          String?               @map("github")
+  website         String?               @map("website")
+  phone           String?               @map("phone")
+  location        String?               @map("location")
+  status          CandidateStatus?      @map("status")
+  interest        CandidateInterest?    @map("interest")
+  careerLevel     CandidateCareerLevel? @map("career_level")
+  resume          String?               @map("resume")
+  source          String?               @map("source")
+  profile         Json?                 @map("profile")
+  notes           String?               @map("notes")
+  lastTouched     DateTime?             @map("last_touched")
 
-  tenantId      String   @map("tenant_id")
-  userId        String   @map("user_id")
-  lastTouchedById String? @map("last_touched_by_id")
-  tenant        Tenant               @relation(fields: [tenantId], references: [id])
-  user          User                 @relation(fields: [userId], references: [id])
-  lastTouchedBy User?                @relation("CandidateTouchedBy", fields: [lastTouchedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  searches      Search[]             @relation("CandidateSearches")
-  companies    Company[] @relation("CompanyCandidates")
-  jobs         Job[]     @relation("JobCandidates")
+  tenantId        String                @map("tenant_id")
+  userId          String                @map("user_id")
+  lastTouchedById String?               @map("last_touched_by_id")
+  tenant          Tenant                @relation(fields: [tenantId], references: [id])
+  user            User                  @relation(fields: [userId], references: [id])
+  lastTouchedBy   User?                 @relation("CandidateTouchedBy", fields: [lastTouchedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  searches        Search[]              @relation("CandidateSearches")
+  companies       Company[]             @relation("CompanyCandidates")
+  jobs            Job[]                 @relation("JobCandidates")
 
-  createdById   String? @map("created_by_id")
-  updatedById   String? @map("updated_by_id")
-  createdBy     User?                @relation("CandidateCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  updatedBy     User?                @relation("CandidateUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdById     String?               @map("created_by_id")
+  updatedById     String?               @map("updated_by_id")
+  createdBy       User?                 @relation("CandidateCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy       User?                 @relation("CandidateUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
-  createdAt     DateTime             @default(now()) @map("created_at")
-  updatedAt     DateTime             @updatedAt @map("updated_at")
-  deletedAt     DateTime?            @map("deleted_at")
-  deleted       Boolean              @default(false) @map("deleted")
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @updatedAt @map("updated_at")
+  deletedAt       DateTime?             @map("deleted_at")
+  deleted         Boolean               @default(false) @map("deleted")
 
   @@map("candidates")
   @@unique([tenantId, email, deletedAt], name: "unique_candidate_email")
@@ -281,4 +306,43 @@ model Company {
   @@map("companies")
   @@unique([tenantId, name, deletedAt], name: "unique_company_name_tenant")
   @@schema("api")
+}
+
+model SystemJob {
+  id          String      @id @default(uuid()) @map("id")
+  name        String      @map("name")
+  description String?     @map("description")
+  status      TaskStatus @default(PENDING) @map("status")
+  priority    TaskPriority @default(MEDIUM) @map("priority")
+  progress    Int?       @map("progress")
+  result      Json?      @map("result")
+  error       String?    @map("error")
+  userId      String      @map("user_id")
+  tenantId    String      @map("tenant_id")
+  user        User       @relation("UserSystemJobs", fields: [userId], references: [id])
+  tenant      Tenant     @relation("TenantSystemJobs", fields: [tenantId], references: [id])
+  createdById String?    @map("created_by_id")
+  updatedById String?    @map("updated_by_id")
+  createdBy   User?      @relation("SystemJobCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy   User?      @relation("SystemJobUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  deletedAt   DateTime?  @map("deleted_at")
+  deleted     Boolean    @default(false) @map("deleted")
+  @@map("system_jobs")
+  @@unique([tenantId, name, deletedAt], name: "unique_system_job_name_tenant")
+  @@schema("system")
+}
+
+model SystemAuditLog {
+  id          String      @id @default(uuid()) @map("id")
+  action      String      @map("action")
+  entity      String      @map("entity")
+  entityId    String?     @map("entity_id")
+  userId      String      @map("user_id")
+  tenantId    String      @map("tenant_id")
+  user        User        @relation("UserSystemAuditLogs", fields: [userId], references: [id])
+  createdAt   DateTime    @default(now()) @map("created_at")
+  @@map("system_audit_logs")
+  @@schema("system")
 }
