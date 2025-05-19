@@ -4,7 +4,7 @@ import { checkRole } from "@/utils";
 import { clerkClient } from "@clerk/nextjs/server";
 
 export async function setRole(formData: FormData) {
-  const client = await clerkClient();
+  const client = clerkClient;
 
   // Check that the user trying to set the role is a business admin
   if (!(await checkRole("business"))) {
@@ -28,7 +28,12 @@ export async function setRole(formData: FormData) {
 }
 
 export async function removeRole(formData: FormData) {
-  const client = await clerkClient();
+  const client = clerkClient;
+
+  if (!(await checkRole("business"))) {
+    console.log("Not Authorized");
+    return;
+  }
 
   if (!(await checkRole("business"))) {
     console.log("Not Authorized");

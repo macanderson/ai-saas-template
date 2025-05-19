@@ -13,7 +13,7 @@ export default async function AdminDashboard(params: {
 
   const query = (await params.searchParams).search;
 
-  const client = await clerkClient();
+  const client = clerkClient;
 
   const users = query ? (await client.users.getUserList({ query })).data : [];
 
