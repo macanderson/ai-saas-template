@@ -16,6 +16,10 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
+<<<<<<< Updated upstream
+=======
+      "@utils/*": ["packages/utils/*"],
+>>>>>>> Stashed changes
       "@/*": ["packages/*", "apps/web/*"]
     }
   },
