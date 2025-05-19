@@ -6,6 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["api"]
 }
 
 enum CandidateStatus {
@@ -81,39 +82,39 @@ enum Industry {
 }
 
 model Tenant {
-  id        String   @id @default(uuid())
-  name      String
+  id        String   @id @default(uuid()) @map("id")
+  name      String   @map("name")
   users     User[]   @relation("TenantUsers")
   candidates Candidate[]
   companies  Company[]
   searches  Search[]
   jobs      Job[]   @relation("TenantJobs")
 
-  createdById String?
-  updatedById String?
+  createdById String? @map("created_by_id")
+  updatedById String? @map("updated_by_id")
   createdBy   User?    @relation("TenantCreatedBy", fields: [createdById], references: [id])
   updatedBy   User?    @relation("TenantUpdatedBy", fields: [updatedById], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
-  deleted     Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  deleted     Boolean  @default(false) @map("deleted")
 
   @@map("tenants")
   @@unique([name, deletedAt], name: "unique_tenant_name")
 }
 
 model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  name        String?
-  tenantId    String
+  id          String   @id @default(uuid()) @map("id")
+  email       String   @map("email")
+  name        String?  @map("name")
+  tenantId    String   @map("tenant_id")
   tenant      Tenant   @relation("TenantUsers", fields: [tenantId], references: [id])
   searches    Search[]
   candidates  Candidate[]
   jobs             Job[]   @relation("UserJobs")
 
-  createdById String?
-  updatedById String?
+  createdById String? @map("created_by_id")
+  updatedById String? @map("updated_by_id")
   createdBy   User?    @relation("UserCreatedBy", fields: [createdById], references: [id])
   updatedBy   User?    @relation("UserUpdatedBy", fields: [updatedById], references: [id])
 
@@ -129,36 +130,36 @@ model User {
   createdJobs      Job[]   @relation("JobCreatedBy")
   updatedJobs      Job[]   @relation("JobUpdatedBy")
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
-  deleted     Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  deleted     Boolean  @default(false) @map("deleted")
 
   @@map("users")
   @@unique([tenantId, email, deletedAt], name: "unique_user_email_tenant")
 }
 
 model Candidate {
-  id            String               @id @default(uuid())
-  name          String?
-  email         String?              @unique
-  linkedin      String?
-  github        String?
-  website       String?
-  phone         String?
-  location      String?
-  status        CandidateStatus?
-  interest      CandidateInterest?
-  careerLevel   CandidateCareerLevel?
-  resume        String?
-  source        String?
-  profile       Json?
-  notes         String?
-  lastTouched   DateTime?
+  id            String               @id @default(uuid()) @map("id")
+  name          String?              @map("name")
+  email         String?              @map("email")
+  linkedin      String?              @map("linkedin")
+  github        String?              @map("github")
+  website       String?              @map("website")
+  phone         String?              @map("phone")
+  location      String?              @map("location")
+  status        CandidateStatus?     @map("status")
+  interest      CandidateInterest?   @map("interest")
+  careerLevel   CandidateCareerLevel? @map("career_level")
+  resume        String?              @map("resume")
+  source        String?              @map("source")
+  profile       Json?                @map("profile")
+  notes         String?              @map("notes")
+  lastTouched   DateTime?            @map("last_touched")
 
-  tenantId      String
-  userId        String
-  lastTouchedById String?
+  tenantId      String   @map("tenant_id")
+  userId        String   @map("user_id")
+  lastTouchedById String? @map("last_touched_by_id")
   tenant        Tenant               @relation(fields: [tenantId], references: [id])
   user          User                 @relation(fields: [userId], references: [id])
   lastTouchedBy User?                @relation("CandidateTouchedBy", fields: [lastTouchedById], references: [id])
@@ -166,96 +167,96 @@ model Candidate {
   companies    Company[] @relation("CompanyCandidates")
   jobs         Job[]     @relation("JobCandidates")
 
-  createdById   String?
-  updatedById   String?
+  createdById   String? @map("created_by_id")
+  updatedById   String? @map("updated_by_id")
   createdBy     User?                @relation("CandidateCreatedBy", fields: [createdById], references: [id])
   updatedBy     User?                @relation("CandidateUpdatedBy", fields: [updatedById], references: [id])
 
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  deletedAt     DateTime?
-  deleted       Boolean              @default(false)
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt @map("updated_at")
+  deletedAt     DateTime?            @map("deleted_at")
+  deleted       Boolean              @default(false) @map("deleted")
 
   @@map("candidates")
   @@unique([tenantId, email, deletedAt], name: "unique_candidate_email")
 }
 
 model Search {
-  id            String       @id @default(uuid())
-  title         String
-  filters       Json
+  id            String       @id @default(uuid()) @map("id")
+  title         String       @map("title")
+  filters       Json         @map("filters")
 
-  userId        String
-  tenantId      String
+  userId        String       @map("user_id")
+  tenantId      String       @map("tenant_id")
   user          User         @relation(fields: [userId], references: [id])
   tenant        Tenant       @relation(fields: [tenantId], references: [id])
   candidates    Candidate[]  @relation("CandidateSearches")
 
-  createdById   String?
-  updatedById   String?
+  createdById   String?      @map("created_by_id")
+  updatedById   String?      @map("updated_by_id")
   createdBy     User?        @relation("SearchCreatedBy", fields: [createdById], references: [id])
   updatedBy     User?        @relation("SearchUpdatedBy", fields: [updatedById], references: [id])
 
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  deletedAt     DateTime?
-  deleted       Boolean      @default(false)
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+  deletedAt     DateTime?    @map("deleted_at")
+  deleted       Boolean      @default(false) @map("deleted")
 
   @@map("searches")
 }
 
 model Job {
-  id            String      @id @default(uuid())
-  title         String
-  description   String?
-  location      String?
-  salaryMin     Int?
-  salaryMax     Int?
-  employmentType String?
-  status        JobStatus  @default(OPEN)
-  requirements  String?
-  responsibilities String?
-  benefits      String?
-  industry      Industry?
+  id            String      @id @default(uuid()) @map("id")
+  title         String      @map("title")
+  description   String?     @map("description")
+  location      String?     @map("location")
+  salaryMin     Int?        @map("salary_min")
+  salaryMax     Int?        @map("salary_max")
+  employmentType String?    @map("employment_type")
+  status        JobStatus  @default(OPEN) @map("status")
+  requirements  String?     @map("requirements")
+  responsibilities String?  @map("responsibilities")
+  benefits      String?     @map("benefits")
+  industry      Industry?   @map("industry")
 
-  tenantId      String
+  tenantId      String      @map("tenant_id")
   tenant        Tenant     @relation("TenantJobs", fields: [tenantId], references: [id])
-  userId        String
+  userId        String      @map("user_id")
   user          User       @relation("UserJobs", fields: [userId], references: [id])
-  companyId    String
+  companyId    String      @map("company_id")
   company      Company   @relation(fields: [companyId], references: [id])
   candidates   Candidate[] @relation("JobCandidates")
 
-  createdById   String?
-  updatedById   String?
+  createdById   String?     @map("created_by_id")
+  updatedById   String?     @map("updated_by_id")
   createdBy     User?      @relation("JobCreatedBy", fields: [createdById], references: [id])
   updatedBy     User?      @relation("JobUpdatedBy", fields: [updatedById], references: [id])
 
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  deletedAt     DateTime?
-  deleted       Boolean    @default(false)
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  deletedAt     DateTime?  @map("deleted_at")
+  deleted       Boolean    @default(false) @map("deleted")
 
   @@map("jobs")
   @@unique([tenantId, title, deletedAt], name: "unique_job_title_tenant")
 }
 
 model Company {
-  id          String   @id @default(uuid())
-  name        String
-  logo        String?
-  url         String?
-  stage       CompanyStage?
-  size        CompanySize?
-  industry    Industry?
-  tenantId    String
+  id          String   @id @default(uuid()) @map("id")
+  name        String   @map("name")
+  logo        String?  @map("logo")
+  url         String?  @map("url")
+  stage       CompanyStage? @map("stage")
+  size        CompanySize? @map("size")
+  industry    Industry? @map("industry")
+  tenantId    String   @map("tenant_id")
   tenant      Tenant   @relation(fields: [tenantId], references: [id])
   jobs        Job[]
   candidates  Candidate[] @relation("CompanyCandidates")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
-  deleted     Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  deleted     Boolean  @default(false) @map("deleted")
   @@map("companies")
   @@unique([tenantId, name, deletedAt], name: "unique_company_name_tenant")
 }

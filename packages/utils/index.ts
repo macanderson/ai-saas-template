@@ -1,3 +1,5 @@
-export function greet(name: string): string {
-  return `Hello, ${name}!`;
-}
+export { checkRole } from "./roles";
+
+export const greet = () => {
+  return "hello";
+};

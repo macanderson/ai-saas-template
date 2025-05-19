@@ -12,5 +12,9 @@ route demonstrates how to enforce tenant-based data access using Clerk
 authentication together with Supabase row level security policies.
 
 Environment variables can be configured using the provided `.env.example` file.
+
 Add `SUPERUSER_EMAIL` to specify which email address can access the `/super`
 page for managing tenants and users.
+
+Tailwind CSS v4 is configured in the `web` app for styling components, and the
+Tailwind and PostCSS configuration files are written in TypeScript.
