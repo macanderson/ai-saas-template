@@ -2,8 +2,8 @@ import { GeistSans } from "geist/font/sans"
 import type { Metadata } from "next"
 import "./globals.css"
 
-import Footer from "@/components/ui/Footer"
-import { NavBar } from "@/components/ui/Navbar"
+import Footer from "../components/ui/Footer"
+import { NavBar } from "../components/ui/Navbar"
 import { siteConfig } from "./siteConfig"
 
 export const metadata: Metadata = {
@@ -32,9 +32,7 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     creator: "@yourname",
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
+  // icons removed
 }
 
 export default function RootLayout({

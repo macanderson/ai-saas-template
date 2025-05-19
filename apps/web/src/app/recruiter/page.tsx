@@ -1,5 +1,5 @@
-import Layout from '@/components/Layout';
-import { checkRole } from '@/utils';
+import Layout from './../../components/Layout';
+import { checkRole } from './../../../../../packages/utils/roles';
 import { redirect } from 'next/navigation';
 
 export default async function RecruiterHome() {

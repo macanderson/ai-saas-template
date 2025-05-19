@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
-import { checkRole } from "@/utils/roles";
+import { checkRole } from "./../../../../../packages/utils/roles";
 import { SearchUsers } from "./components/SearchUsers";
 import { clerkClient } from "@clerk/nextjs/server";
 import { removeRole, setRole } from "./_actions";
-import Layout from '@/components/Layout';
+import Layout from './../../components/Layout';
 import { User } from "@clerk/nextjs/server";
 
 export default async function AdminDashboard(params: {

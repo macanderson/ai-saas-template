@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import Link from 'next/link';
 import { UserButton, SignedIn, SignedOut, SignInButton } from '@clerk/nextjs';
 import { TenantSwitcher } from './TenantSwitcher';
 

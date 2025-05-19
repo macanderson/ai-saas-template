@@ -1,8 +1,8 @@
 // Tremor Divider [v0.0.2]
 
 import React from "react"
+import { cx } from "../lib/utils"
 
-import { cx } from "@/lib/utils"
 
 type DividerProps = React.ComponentPropsWithoutRef<"div">
 
@@ -27,7 +27,7 @@ const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
               // base
               "h-[1px] w-full",
               // background color
-              "bg-linear-to-r from-transparent to-gray-200",
+              "bg-gradient-to-r from-transparent to-gray-200",
             )}
           />
           <div className="whitespace-nowrap text-inherit">{children}</div>
@@ -36,7 +36,7 @@ const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
               // base
               "h-[1px] w-full",
               // background color
-              "bg-linear-to-l from-transparent to-gray-200",
+              "bg-gradient-to-l from-transparent to-gray-200",
             )}
           />
         </>
@@ -46,7 +46,7 @@ const Divider = React.forwardRef<HTMLDivElement, DividerProps>(
             // base
             "h-[1px] w-full",
             // background color
-            "bg-linear-to-l from-transparent via-gray-200 to-transparent",
+            "bg-gradient-to-l from-transparent via-gray-200 to-transparent",
           )}
         />
       )}

@@ -1,4 +1,4 @@
-import { cx } from "@/lib/utils"
+import { cx } from "../../lib/utils"
 
 export const StickerCard = ({
   title,
