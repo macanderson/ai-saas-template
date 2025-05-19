@@ -13,8 +13,8 @@ ALTER TABLE "companies" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "users can view their tenant"
 ON "tenants"
 FOR SELECT
-USING ( 
-  auth.jwt() ->> 'tenant_id' = id
+USING (
+  auth.jwt() ->> 'tenant_id' = id AND auth.jwt() ->> 'role' = 'business'
 );
 
 -- 2. users Table
