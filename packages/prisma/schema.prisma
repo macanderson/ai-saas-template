@@ -1,6 +1,7 @@
-generator client {
+regenerator client {
   provider = "prisma-client-py"
   output   = "../../apps/api/prisma_client"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
@@ -16,6 +17,7 @@ enum CandidateStatus {
   OFFERED
   HIRED
   REJECTED
+  @@schema("api")
 }
 
 enum CandidateCareerLevel {
@@ -24,12 +26,15 @@ enum CandidateCareerLevel {
   SENIOR_LEVEL
   DIRECTOR_LEVEL
   C_LEVEL
+  @@schema("api")
+
 }
 
 enum CandidateInterest {
   UNKNOWN
   NOT_INTERESTED
   OPEN_TO_WORK
+  @@schema("api")
 }
 
 enum CompanyStage {
@@ -41,6 +46,7 @@ enum CompanyStage {
   SERIES_D
   PUBLIC
   PRIVATE
+  @@schema("api")
 }
 
 enum JobStatus {
@@ -48,6 +54,7 @@ enum JobStatus {
   CLOSED
   ON_HOLD
   FILLED
+  @@schema("api")
 }
 
 enum CompanySize {
@@ -59,6 +66,7 @@ enum CompanySize {
   SIZE_500_1000
   SIZE_1000_5000
   SIZE_5000_PLUS
+  @@schema("api")
 }
 
 enum Industry {
@@ -79,6 +87,7 @@ enum Industry {
   TELECOMMUNICATIONS
   AGRICULTURE
   OTHER
+  @@schema("api")
 }
 
 model Tenant {
@@ -101,6 +110,7 @@ model Tenant {
 
   @@map("tenants")
   @@unique([name, deletedAt], name: "unique_tenant_name")
+  @@schema("api")
 }
 
 model User {
@@ -137,6 +147,7 @@ model User {
 
   @@map("users")
   @@unique([tenantId, email, deletedAt], name: "unique_user_email_tenant")
+  @@schema("api")
 }
 
 model Candidate {
@@ -179,6 +190,7 @@ model Candidate {
 
   @@map("candidates")
   @@unique([tenantId, email, deletedAt], name: "unique_candidate_email")
+  @@schema("api")
 }
 
 model Search {
@@ -201,6 +213,7 @@ model Search {
   updatedAt     DateTime     @updatedAt @map("updated_at")
   deletedAt     DateTime?    @map("deleted_at")
   deleted       Boolean      @default(false) @map("deleted")
+  @@schema("api")
 
   @@map("searches")
 }
@@ -239,6 +252,7 @@ model Job {
 
   @@map("jobs")
   @@unique([tenantId, title, deletedAt], name: "unique_job_title_tenant")
+  @@schema("api")
 }
 
 model Company {
@@ -259,4 +273,5 @@ model Company {
   deleted     Boolean  @default(false) @map("deleted")
   @@map("companies")
   @@unique([tenantId, name, deletedAt], name: "unique_company_name_tenant")
+  @@schema("api")
 }
