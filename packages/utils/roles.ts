@@ -1,7 +1,10 @@
-import { Roles } from "@/types/globals";
+import { Roles } from "../types";
 import { auth } from "@clerk/nextjs/server";
 
 export const checkRole = async (role: Roles) => {
   const { sessionClaims } = await auth();
-  return sessionClaims?.metadata.role === role;
+  const claims = sessionClaims as
+    | typeof globalThis.CustomJwtSessionClaims
+    | undefined;
+  return claims?.metadata.role === role;
 };

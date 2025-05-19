@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "paths": {
-      "@/*": ["packages/*"]
+      "@utils": ["packages/utils"],
+      "@/*": ["packages/*", "apps/web/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

@@ -1,51 +1,43 @@
-"use server";
+'use server';
 
-import { checkRole } from "@/utils";
-import { clerkClient } from "@clerk/nextjs/server";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-export async function setRole(formData: FormData) {
-  const client = clerkClient;
+export async function createTenant(formData: FormData) {
+  await fetch(`${API_URL}/tenants`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: formData.get('name') }),
+  });
+}
 
-  // Check that the user trying to set the role is a business admin
-  if (!(await checkRole("business"))) {
-    console.log("Not Authorized");
-    // return { message: "Not Authorized" };
-  }
-
-  try {
-    const res = await client.users.updateUserMetadata(
-      formData.get("id") as string,
-      {
-        publicMetadata: { role: formData.get("role") },
-      }
-    );
-    console.log(res.publicMetadata);
-    // return { message: res.publicMetadata };
-  } catch (err) {
-    // return { message: err };
-    console.log(err);
-  }
+export async function createUser(formData: FormData) {
+  await fetch(`${API_URL}/users`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: formData.get('email'),
+      name: formData.get('name'),
+      tenantId: formData.get('tenantId'),
+    }),
+  });
 }
 
 export async function removeRole(formData: FormData) {
-  const client = clerkClient;
+  const userId = formData.get('userId') as string;
+  const role = formData.get('role') as string;
+  await fetch(`${API_URL}/users/${userId}/roles/remove`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role }),
+  });
+}
 
-  if (!(await checkRole("business"))) {
-    console.log("Not Authorized");
-    return;
-  }
-
-  try {
-    const res = await client.users.updateUserMetadata(
-      formData.get("id") as string,
-      {
-        publicMetadata: { role: null },
-      }
-    );
-    console.log(res.publicMetadata);
-    // return { message: res.publicMetadata };
-  } catch (err) {
-    // return { message: err };
-    console.log(err);
-  }
+export async function setRole(formData: FormData) {
+  const userId = formData.get('userId') as string;
+  const role = formData.get('role') as string;
+  await fetch(`${API_URL}/users/${userId}/roles`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role }),
+  });
 }
