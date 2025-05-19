@@ -1,4 +1,4 @@
-import Layout from '../../components/Layout';
+import Layout from '@/components/Layout';
 import { checkRole } from '@/utils';
 import { redirect } from 'next/navigation';
 
