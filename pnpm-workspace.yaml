@@ -2,7 +2,12 @@ packages:
   - apps/*
   - packages/*
 onlyBuiltDependencies:
-  - '@prisma/client'
-  - '@prisma/engines'
-  - '@tailwindcss/oxide'
+  - "@prisma/client"
+  - "@prisma/engines"
+  - "@tailwindcss/oxide"
   - prisma
+dedupeDirectDeps: true
+packageImportMethod: "auto"
+includeWorkspaceRoot: true
+resolvePeersFromWorkspaceRoot: true
+injectWorkspacePackages: true

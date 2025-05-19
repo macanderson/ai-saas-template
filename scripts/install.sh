@@ -1,14 +1,18 @@
 #!/bin/bash
 set -e
 
+# Get the root directory of the project
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+
 # Install Node dependencies
-pnpm install
+cd "$ROOT_DIR" && pnpm install
 
 # Set up Python virtual environment
-bash "$(dirname "$0")/setup_venv.sh"
-source apps/api/.venv/bin/activate
+bash "$SCRIPT_DIR/setup_venv.sh"
+source "$ROOT_DIR/apps/api/.venv/bin/activate"
 
 # Install Python dependencies for API
-pip install -r apps/api/requirements.txt
+pip install -r "$ROOT_DIR/apps/api/requirements.txt"
 
-echo "Python virtual environment ready at apps/api/.venv"
+echo "Python virtual environment ready at $ROOT_DIR/apps/api/.venv"

@@ -1,4 +1,4 @@
 #!/bin/bash
 # Activate the Python virtual environment for the API
-source "$(dirname "$0")/../apps/api/.venv/bin/activate"
-
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "${SCRIPT_DIR}/../apps/api/.venv/bin/activate"
