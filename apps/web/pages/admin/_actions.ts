@@ -35,11 +35,6 @@ export async function removeRole(formData: FormData) {
     return;
   }
 
-  if (!(await checkRole("business"))) {
-    console.log("Not Authorized");
-    return;
-  }
-
   try {
     const res = await client.users.updateUserMetadata(
       formData.get("id") as string,

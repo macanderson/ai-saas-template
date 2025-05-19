@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { supabase } from '../lib/supabase';
-import { Input } from '@ui';
 
 export function TenantSwitcher() {
   const { user } = useUser();
