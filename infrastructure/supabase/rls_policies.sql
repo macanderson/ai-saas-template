@@ -25,6 +25,7 @@ USING (
   auth.jwt() ->> 'tenant_id' = tenantId
 );
 
+
 -- 3. companies Table
 CREATE POLICY "Access companies in same tenant"
 ON "companies"
