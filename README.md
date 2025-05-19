@@ -1,16 +1,20 @@
-# AI Mono-Repo Project Scaffold (Turborepo)
+# Mac Anderson's SaaS Multi-agent App Scaffolding (Turborepo)
 
 This template is designed for creating full stack monorepos that support the development of modern, multi-agent AI applications.
 
-The project uses **turborepo** with `pnpm` workspaces.  The backend lives in
+The project uses **turborepo** with `pnpm` workspaces. The backend lives in
 `apps/api` while a Next.js frontend is scaffolded in `apps/web`.
 
-The scaffold now includes authentication with **Clerk** and a PostgreSQL
+The scaffold includes authentication with **Clerk** and a PostgreSQL
 database hosted on **Supabase**. Basic pages for user registration, login,
 logout and profile management are implemented in the Next.js app. A simple API
 route demonstrates how to enforce tenant-based data access using Clerk
 authentication together with Supabase row level security policies.
 
 Environment variables can be configured using the provided `.env.example` file.
-Tailwind CSS v4 is configured in the `web` app for styling components, and the
+
+Add `SUPERUSER_EMAIL` to specify which email address can access the `/super`
+page for managing tenants and users.
+
+Tailwind CSS v3 is configured in the `web` app for styling components, and the
 Tailwind and PostCSS configuration files are written in TypeScript.

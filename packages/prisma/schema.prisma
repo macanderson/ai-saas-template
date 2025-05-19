@@ -1,6 +1,8 @@
+// ScoutAI Prisma Schema
 generator client {
   provider = "prisma-client-py"
   output   = "../../apps/api/prisma_client"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
@@ -16,6 +18,7 @@ enum CandidateStatus {
   OFFERED
   HIRED
   REJECTED
+  @@schema("api")
 }
 
 enum CandidateCareerLevel {
@@ -24,12 +27,15 @@ enum CandidateCareerLevel {
   SENIOR_LEVEL
   DIRECTOR_LEVEL
   C_LEVEL
+  @@schema("api")
+
 }
 
 enum CandidateInterest {
   UNKNOWN
   NOT_INTERESTED
   OPEN_TO_WORK
+  @@schema("api")
 }
 
 enum CompanyStage {
@@ -41,6 +47,7 @@ enum CompanyStage {
   SERIES_D
   PUBLIC
   PRIVATE
+  @@schema("api")
 }
 
 enum JobStatus {
@@ -48,6 +55,7 @@ enum JobStatus {
   CLOSED
   ON_HOLD
   FILLED
+  @@schema("api")
 }
 
 enum CompanySize {
@@ -59,6 +67,7 @@ enum CompanySize {
   SIZE_500_1000
   SIZE_1000_5000
   SIZE_5000_PLUS
+  @@schema("api")
 }
 
 enum Industry {
@@ -79,6 +88,7 @@ enum Industry {
   TELECOMMUNICATIONS
   AGRICULTURE
   OTHER
+  @@schema("api")
 }
 
 model Tenant {
@@ -92,8 +102,8 @@ model Tenant {
 
   createdById String? @map("created_by_id")
   updatedById String? @map("updated_by_id")
-  createdBy   User?    @relation("TenantCreatedBy", fields: [createdById], references: [id])
-  updatedBy   User?    @relation("TenantUpdatedBy", fields: [updatedById], references: [id])
+  createdBy   User?    @relation("TenantCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy   User?    @relation("TenantUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   deletedAt   DateTime? @map("deleted_at")
@@ -101,6 +111,7 @@ model Tenant {
 
   @@map("tenants")
   @@unique([name, deletedAt], name: "unique_tenant_name")
+  @@schema("api")
 }
 
 model User {
@@ -115,8 +126,8 @@ model User {
 
   createdById String? @map("created_by_id")
   updatedById String? @map("updated_by_id")
-  createdBy   User?    @relation("UserCreatedBy", fields: [createdById], references: [id])
-  updatedBy   User?    @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+  createdBy   User?    @relation("UserCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy   User?    @relation("UserUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
   createdTenants    Tenant[] @relation("TenantCreatedBy")
   updatedTenants    Tenant[] @relation("TenantUpdatedBy")
@@ -137,6 +148,7 @@ model User {
 
   @@map("users")
   @@unique([tenantId, email, deletedAt], name: "unique_user_email_tenant")
+  @@schema("api")
 }
 
 model Candidate {
@@ -162,15 +174,15 @@ model Candidate {
   lastTouchedById String? @map("last_touched_by_id")
   tenant        Tenant               @relation(fields: [tenantId], references: [id])
   user          User                 @relation(fields: [userId], references: [id])
-  lastTouchedBy User?                @relation("CandidateTouchedBy", fields: [lastTouchedById], references: [id])
+  lastTouchedBy User?                @relation("CandidateTouchedBy", fields: [lastTouchedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
   searches      Search[]             @relation("CandidateSearches")
   companies    Company[] @relation("CompanyCandidates")
   jobs         Job[]     @relation("JobCandidates")
 
   createdById   String? @map("created_by_id")
   updatedById   String? @map("updated_by_id")
-  createdBy     User?                @relation("CandidateCreatedBy", fields: [createdById], references: [id])
-  updatedBy     User?                @relation("CandidateUpdatedBy", fields: [updatedById], references: [id])
+  createdBy     User?                @relation("CandidateCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy     User?                @relation("CandidateUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
   createdAt     DateTime             @default(now()) @map("created_at")
   updatedAt     DateTime             @updatedAt @map("updated_at")
@@ -179,6 +191,7 @@ model Candidate {
 
   @@map("candidates")
   @@unique([tenantId, email, deletedAt], name: "unique_candidate_email")
+  @@schema("api")
 }
 
 model Search {
@@ -194,13 +207,14 @@ model Search {
 
   createdById   String?      @map("created_by_id")
   updatedById   String?      @map("updated_by_id")
-  createdBy     User?        @relation("SearchCreatedBy", fields: [createdById], references: [id])
-  updatedBy     User?        @relation("SearchUpdatedBy", fields: [updatedById], references: [id])
+  createdBy     User?        @relation("SearchCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy     User?        @relation("SearchUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
   deletedAt     DateTime?    @map("deleted_at")
   deleted       Boolean      @default(false) @map("deleted")
+  @@schema("api")
 
   @@map("searches")
 }
@@ -229,8 +243,8 @@ model Job {
 
   createdById   String?     @map("created_by_id")
   updatedById   String?     @map("updated_by_id")
-  createdBy     User?      @relation("JobCreatedBy", fields: [createdById], references: [id])
-  updatedBy     User?      @relation("JobUpdatedBy", fields: [updatedById], references: [id])
+  createdBy     User?      @relation("JobCreatedBy", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  updatedBy     User?      @relation("JobUpdatedBy", fields: [updatedById], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
   createdAt     DateTime   @default(now()) @map("created_at")
   updatedAt     DateTime   @updatedAt @map("updated_at")
@@ -239,6 +253,7 @@ model Job {
 
   @@map("jobs")
   @@unique([tenantId, title, deletedAt], name: "unique_job_title_tenant")
+  @@schema("api")
 }
 
 model Company {
@@ -259,4 +274,5 @@ model Company {
   deleted     Boolean  @default(false) @map("deleted")
   @@map("companies")
   @@unique([tenantId, name, deletedAt], name: "unique_company_name_tenant")
+  @@schema("api")
 }
